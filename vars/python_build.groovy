@@ -59,7 +59,6 @@ def call(dockerRepoName, imageName, serviceName) {
                 }
                 steps {
                     withCredentials([sshUserPrivateKey(credentialsId: 'microservices_vm', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
-                        // Continue from here...
                         script {
                             // Transfer docker-compose.yml
                             sh """
