@@ -30,7 +30,7 @@ def call(dockerRepoName, imageName) {
                         // Install Safety tool
                         sh '''
                             . venv/bin/activate
-                            pip install safety'
+                            pip install safety
                             safety check -r requirements.txt
                         '''
                     }
