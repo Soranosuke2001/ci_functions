@@ -1,4 +1,4 @@
-def call(dockerRepoName, imageName) {
+def call(dockerRepoName, imageName, serviceName) {
     pipeline {
         agent any
         stages {
@@ -20,7 +20,7 @@ def call(dockerRepoName, imageName) {
                 steps {
                     script {
                         // Run pylint
-                        sh '. venv/bin/activate && pylint Receiver/*.py || true'
+                        sh ". venv/bin/activate && pylint ${serviceName}/*.py || true"
                     }
                 }
             }
@@ -30,7 +30,6 @@ def call(dockerRepoName, imageName) {
                         // Install Safety tool
                         sh '''
                             . venv/bin/activate
-                            pip install safety
                             safety check -r requirements.txt
                         '''
                     }
@@ -43,7 +42,7 @@ def call(dockerRepoName, imageName) {
                 steps {
                     withCredentials([string(credentialsId: 'DockerHub', variable: 'TOKEN')]) {
                         sh "docker login -u 'soranosuke' -p '$TOKEN' docker.io"
-                        sh "docker build -t ${dockerRepoName}:latest --tag soranosuke/${dockerRepoName}:${imageName} Receiver/."
+                        sh "docker build -t ${dockerRepoName}:latest --tag soranosuke/${dockerRepoName}:${imageName} ${serviceName}/."
                         sh "docker push soranosuke/${dockerRepoName}:${imageName}"
                     }
                 }
@@ -53,7 +52,6 @@ def call(dockerRepoName, imageName) {
             always {
                 script {
                     // Clean up virtual environment
-                    sh 'deactivate || true' // Deactivate virtual environment
                     sh 'rm -rf venv' // Remove virtual environment
                 }
             }
