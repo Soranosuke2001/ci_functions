@@ -16,13 +16,13 @@ def call(dockerRepoName, imageName) {
                     }
                 }
             }
-            stage ('Lint') {
+            stage('Lint') {
                 steps {
                     script {
                         // Run pylint
                         sh '. venv/bin/activate && pylint Receiver/*.py || true'
                     }
-                }  
+                }
             }
             stage('Security Check') {
                 steps {
@@ -33,6 +33,18 @@ def call(dockerRepoName, imageName) {
                             pip install safety
                             safety check -r requirements.txt
                         '''
+                    }
+                }
+            }
+            stage('Package') {
+                when {
+                    expression { env.GIT_BRANCH == 'origin/main' }
+                }
+                steps {
+                    withCredentials([string(credentialsId: 'DockerHub', variable: 'TOKEN')]) {
+                        sh "docker login -u 'soranosuke' -p '$TOKEN' docker.io"
+                        sh "docker build -t ${dockerRepoName}:latest --tag soranosuke/${dockerRepoName}:${imageName} ."
+                        sh "docker push soranosuke/${dockerRepoName}:${imageName}"
                     }
                 }
             }
