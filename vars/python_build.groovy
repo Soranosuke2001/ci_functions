@@ -24,7 +24,18 @@ def call(dockerRepoName, imageName) {
                     }
                 }  
             }
-            // Add other stages as per your requirements
+            stage('Security Check') {
+                steps {
+                    script {
+                        // Install Safety tool
+                        sh '''
+                            . venv/bin/activate
+                            pip install safety'
+                            safety check -r requirements.txt
+                        '''
+                    }
+                }
+            }
         }
         post {
             always {
