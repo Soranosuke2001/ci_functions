@@ -53,20 +53,25 @@ def call(dockerRepoName, imageName, serviceName) {
                     }
                 }
             }
-            stage('Deploy') {
+            stage('File Transfer') {
                 when {
                     expression { params.DEPLOY == true }
                 }
                 steps {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'microservices_vm', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
-                        // Transfer docker-compose.yml
-                        sh """
-                            scp -i \$SSH_KEY /home/soranosuke/Microservices-Project/deployment/docker-compose.yml \$SSH_USER@35.230.127.229:/home/soranosuke/assignment3/docker-compose.yml
-                        """
-
-                        sh """
-                            ssh -i \$SSH_KEY \$SSH_USER@35.230.127.229 'cd /home/soranosuke/assignment3 && docker-compose up -d'
-                        """
+                    script {
+                        // Transfer the App to the remote VM
+                        sshPut remote: remote, from: '/home/soranosuke/Microservices/deployment/docker-compose.yml', into: '/home/soranosuke/deployment/docker-compose.yml'
+                    }
+                }
+            }
+            stage('Deploy') {
+                steps {
+                    script {
+                        // Execute docker-compose up -d on the remote VM
+                        sshScript remote: remote, script: '''
+                        cd /home/soranosuke/deployment
+                        docker-compose up -d
+                    '''
                     }
                 }
                 post {
@@ -81,3 +86,10 @@ def call(dockerRepoName, imageName, serviceName) {
         }
     }
 }
+
+def remote = [
+    // IP address or hostname of the remote VM
+    remote: '35.230.127.229',
+    // Credentials ID added in Jenkins for SSH key authentication
+    credentialsId: 'microservices_vm'
+]
