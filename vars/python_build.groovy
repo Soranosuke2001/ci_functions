@@ -1,22 +1,10 @@
 def call(dockerRepoName, imageName, serviceName) {
-    def remote = [
-        name: 'my-remote',
-        user: 'soranosuke',
-        // IP address or hostname of the remote VM
-        host: '35.230.127.229',
-        // Credentials ID added in Jenkins for SSH key authentication
-        credentialsId: 'microservices_vm',
-        allowAnyHosts: true
-    ]
-    
     pipeline {
         agent any
 
         parameters {
             booleanParam(defaultValue: false, description: 'Deploy the App', name:'DEPLOY')
         }
-
-
 
         stages {
             stage('Setup') {
@@ -65,28 +53,26 @@ def call(dockerRepoName, imageName, serviceName) {
                     }
                 }
             }
-            stage('File Transfer') {
-                when {
-                    expression { params.DEPLOY == true }
-                }
-                steps {
-                    script {
-                        // Transfer the App to the remote VM
-                        sshPut remote: remote, from: 'deployment/docker-compose.yml', into: '/home/soranosuke/deployment/docker-compose.yml'
-                    }
-                }
-            }
+            def remote = [:]
+            remote.name = 'microservices-project'
+            remote.host = '35.230.127.229'
+            remote.allowAnyHosts = true
+
             stage('Deploy') {
                 when {
                     expression { params.DEPLOY == true }
                 }
-                steps {
-                    script {
-                        // Execute docker-compose up -d on the remote VM
+
+                withCredentials([sshUserPrivateKey(credentialsId: 'microservices_vm', keyFileVariable: 'KEY_FILE', usernameVariable: 'USER')]) {
+                    remote.user = USER
+                    remote.identityFile = KEY_FILE
+
+                    stage('File Transfer and Deployment') {
+                        sshPut remote: remote, from: 'deployment/docker-compose.yml', into: '/home/soranosuke/deployment/docker-compose.yml'
                         sshScript remote: remote, script: '''
-                        cd /home/soranosuke/deployment
-                        docker-compose up -d
-                    '''
+                            cd /home/soranosuke/deployment
+                            docker-compose up -d
+                        '''
                     }
                 }
                 post {
