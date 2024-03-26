@@ -65,6 +65,9 @@ def call(dockerRepoName, imageName, serviceName) {
                 }
             }
             stage('Deploy') {
+                when {
+                    expression { params.DEPLOY == true }
+                }
                 steps {
                     script {
                         // Execute docker-compose up -d on the remote VM
