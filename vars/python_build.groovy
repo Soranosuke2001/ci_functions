@@ -59,16 +59,14 @@ def call(dockerRepoName, imageName, serviceName) {
                 }
                 steps {
                     withCredentials([sshUserPrivateKey(credentialsId: 'microservices_vm', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
-                        script {
-                            // Transfer docker-compose.yml
-                            sh """
-                                scp -i \$SSH_KEY /home/soranosuke/Microservices-Project/deployment/docker-compose.yml \$SSH_USER@35.230.127.229:/home/soranosuke/assignment3/docker-compose.yml
-                            """
+                        // Transfer docker-compose.yml
+                        sh """
+                            scp -i \$SSH_KEY /home/soranosuke/Microservices-Project/deployment/docker-compose.yml \$SSH_USER@35.230.127.229:/home/soranosuke/assignment3/docker-compose.yml
+                        """
 
-                            sh """
-                                ssh -i \$SSH_KEY \$SSH_USER@35.230.127.229 'cd /home/soranosuke/assignment3 && docker-compose up -d'
-                            """
-                        }
+                        sh """
+                            ssh -i \$SSH_KEY \$SSH_USER@35.230.127.229 'cd /home/soranosuke/assignment3 && docker-compose up -d'
+                        """
                     }
                 }
             }
