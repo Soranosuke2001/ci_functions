@@ -1,6 +1,11 @@
 def call(dockerRepoName, imageName, serviceName) {
     pipeline {
         agent any
+
+        parameters {
+            booleanParam(defaultValue: false, description: 'Deploy the App', name:'DEPLOY')
+        }
+
         stages {
             stage('Setup') {
                 steps {
@@ -40,6 +45,7 @@ def call(dockerRepoName, imageName, serviceName) {
                     expression { env.GIT_BRANCH == 'origin/main' }
                 }
                 steps {
+                    // Pushing the image to Docker Hub
                     withCredentials([string(credentialsId: 'DockerHub', variable: 'TOKEN')]) {
                         sh "docker login -u 'soranosuke' -p '$TOKEN' docker.io"
                         sh "docker build -t ${dockerRepoName}:latest --tag soranosuke/${dockerRepoName}:${imageName} ${serviceName}/."
@@ -47,12 +53,32 @@ def call(dockerRepoName, imageName, serviceName) {
                     }
                 }
             }
-        }
-        post {
-            always {
-                script {
-                    // Clean up virtual environment
-                    sh 'rm -rf venv' // Remove virtual environment
+            stage('Deploy') {
+                when {
+                    expression { params.DEPLOY == true }
+                }
+                steps {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'microservices_vm', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                        // Continue from here...
+                        script {
+                            // Transfer docker-compose.yml
+                            sh """
+                                scp -i \$SSH_KEY /home/soranosuke/Microservices-Project/deployment/docker-compose.yml \$SSH_USER@35.230.127.229:/home/soranosuke/assignment3/docker-compose.yml
+                            """
+
+                            sh """
+                                ssh -i \$SSH_KEY \$SSH_USER@35.230.127.229 'cd /home/soranosuke/assignment3 && docker-compose up -d'
+                            """
+                        }
+                    }
+                }
+            }
+            post {
+                always {
+                    script {
+                        // Clean up virtual environment
+                        sh 'rm -rf venv' // Remove virtual environment
+                    }
                 }
             }
         }
