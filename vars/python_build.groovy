@@ -70,6 +70,7 @@ def call(dockerRepoName, imageName, serviceName) {
 
                             sshPut remote: remote, from: 'deployment/docker-compose.yml', into: '/home/soranosuke/deployment/docker-compose.yml'
                             sshScript remote: remote, script: '''
+                                mkdir -p /home/soranosuke/deployment
                                 cd /home/soranosuke/deployment
                                 docker-compose up -d
                             '''
