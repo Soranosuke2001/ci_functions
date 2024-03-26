@@ -12,6 +12,7 @@ def call(dockerRepoName, imageName) {
                         sh 'pip install --upgrade pip'
                         // Install flask and other dependencies
                         sh 'pip install --upgrade flask'
+                        sh 'pip install mysqlclient'
                         sh 'pip install -r requirements.txt'
                     }
                 }
