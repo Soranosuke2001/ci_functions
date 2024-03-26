@@ -6,13 +6,13 @@ def call(dockerRepoName, imageName) {
                 steps {
                     script {
                         // Create and activate virtual environment
-                        sh 'python3 -m venv venv'
-                        sh '. venv/bin/activate'
-                        // Upgrade pip to avoid potential issues
-                        sh 'pip install --upgrade pip'
-                        // Install flask and other dependencies
-                        sh 'pip install --upgrade flask'
-                        sh 'pip install -r requirements.txt'
+                        sh '''
+                            python3 -m venv venv
+                            . venv/bin/activate
+                            pip install --upgrade pip
+                            pip install --upgrade flask
+                            pip install -r requirements.txt
+                        '''
                     }
                 }
             }
@@ -20,7 +20,7 @@ def call(dockerRepoName, imageName) {
                 steps {
                     script {
                         // Run pylint
-                        sh 'pylint Receiver/*.py || true' // Continue pipeline execution even if pylint fails
+                        sh '. venv/bin/activate && pylint Receiver/*.py || true'
                     }
                 }  
             }
