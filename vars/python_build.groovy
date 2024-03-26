@@ -6,6 +6,14 @@ def call(dockerRepoName, imageName, serviceName) {
             booleanParam(defaultValue: false, description: 'Deploy the App', name:'DEPLOY')
         }
 
+        def remote = [
+            // IP address or hostname of the remote VM
+            remote: '35.230.127.229',
+            // Credentials ID added in Jenkins for SSH key authentication
+            credentialsId: 'microservices_vm'
+        ]
+
+
         stages {
             stage('Setup') {
                 steps {
@@ -89,10 +97,3 @@ def call(dockerRepoName, imageName, serviceName) {
         }
     }
 }
-
-def remote = [
-    // IP address or hostname of the remote VM
-    remote: '35.230.127.229',
-    // Credentials ID added in Jenkins for SSH key authentication
-    credentialsId: 'microservices_vm'
-]
