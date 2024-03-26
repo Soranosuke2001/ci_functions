@@ -1,5 +1,6 @@
 def call(dockerRepoName, imageName, serviceName) {
     def remote = [
+        name: 'my-remote',
         // IP address or hostname of the remote VM
         remote: '35.230.127.229',
         // Credentials ID added in Jenkins for SSH key authentication
