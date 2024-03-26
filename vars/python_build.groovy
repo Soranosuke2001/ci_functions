@@ -3,7 +3,7 @@ def call(dockerRepoName, imageName, serviceName) {
         name: 'my-remote',
         user: 'soranosuke',
         // IP address or hostname of the remote VM
-        remote: '35.230.127.229',
+        host: '35.230.127.229',
         // Credentials ID added in Jenkins for SSH key authentication
         credentialsId: 'microservices_vm',
         allowAnyHosts: true
