@@ -1,15 +1,15 @@
 def call(dockerRepoName, imageName, serviceName) {
+    def remote = [:]
+    remote.name = 'microservices-project'
+    remote.host = '35.230.127.229'
+    remote.allowAnyHosts = true
+
     pipeline {
         agent any
 
         parameters {
             booleanParam(defaultValue: false, description: 'Deploy the App', name:'DEPLOY')
         }
-
-        def remote = [:]
-        remote.name = 'microservices-project'
-        remote.host = '35.230.127.229'
-        remote.allowAnyHosts = true
 
         stages {
             stage('Setup') {
