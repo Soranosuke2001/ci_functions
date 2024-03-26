@@ -12,6 +12,8 @@ def call(dockerRepoName, imageName) {
 
                     sh 'python3 -m venv venv'
                     sh '. venv/bin/activate'
+
+                    sh '$USER'
                     
                     sh 'pip install -r requirements.txt --break-system-packages'
                     sh 'pip install --upgrade flask --break-system-packages'
