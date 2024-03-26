@@ -68,7 +68,7 @@ def call(dockerRepoName, imageName, serviceName) {
                             remote.user = USER
                             remote.identityFile = KEY_FILE
 
-                            sshPut remote: remote, from: 'deployment/docker-compose.yml', into: '/home/soranosuke/deployment/docker-compose.yml'
+                            sshPut remote: remote, from: 'deployment/docker-compose.yml', into: '/home/soranosuke/deployment/'
                             sshScript remote: remote, script: '''
                                 mkdir -p /home/soranosuke/deployment
                                 cd /home/soranosuke/deployment
