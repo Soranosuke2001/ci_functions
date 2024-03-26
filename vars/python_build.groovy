@@ -69,12 +69,12 @@ def call(dockerRepoName, imageName, serviceName) {
                         """
                     }
                 }
-            }
-            post {
-                always {
-                    script {
-                        // Clean up virtual environment
-                        sh 'rm -rf venv' // Remove virtual environment
+                post {
+                    always {
+                        script {
+                            // Clean up virtual environment
+                            sh 'rm -rf venv' // Remove virtual environment
+                        }
                     }
                 }
             }
