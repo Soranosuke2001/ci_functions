@@ -62,17 +62,18 @@ def call(dockerRepoName, imageName, serviceName) {
                 when {
                     expression { params.DEPLOY == true }
                 }
+                steps {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'microservices_vm', keyFileVariable: 'KEY_FILE', usernameVariable: 'USER')]) {
+                        script {
+                            remote.user = USER
+                            remote.identityFile = KEY_FILE
 
-                withCredentials([sshUserPrivateKey(credentialsId: 'microservices_vm', keyFileVariable: 'KEY_FILE', usernameVariable: 'USER')]) {
-                    remote.user = USER
-                    remote.identityFile = KEY_FILE
-
-                    stage('File Transfer and Deployment') {
-                        sshPut remote: remote, from: 'deployment/docker-compose.yml', into: '/home/soranosuke/deployment/docker-compose.yml'
-                        sshScript remote: remote, script: '''
-                            cd /home/soranosuke/deployment
-                            docker-compose up -d
-                        '''
+                            sshPut remote: remote, from: 'deployment/docker-compose.yml', into: '/home/soranosuke/deployment/docker-compose.yml'
+                            sshScript remote: remote, script: '''
+                                cd /home/soranosuke/deployment
+                                docker-compose up -d
+                            '''
+                        }
                     }
                 }
                 post {
