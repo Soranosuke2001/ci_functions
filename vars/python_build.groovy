@@ -6,6 +6,11 @@ def call(dockerRepoName, imageName, serviceName) {
             booleanParam(defaultValue: false, description: 'Deploy the App', name:'DEPLOY')
         }
 
+        def remote = [:]
+        remote.name = 'microservices-project'
+        remote.host = '35.230.127.229'
+        remote.allowAnyHosts = true
+
         stages {
             stage('Setup') {
                 steps {
@@ -53,11 +58,6 @@ def call(dockerRepoName, imageName, serviceName) {
                     }
                 }
             }
-            def remote = [:]
-            remote.name = 'microservices-project'
-            remote.host = '35.230.127.229'
-            remote.allowAnyHosts = true
-
             stage('Deploy') {
                 when {
                     expression { params.DEPLOY == true }
