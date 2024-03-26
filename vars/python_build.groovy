@@ -69,7 +69,7 @@ def call(dockerRepoName, imageName, serviceName) {
                             remote.identityFile = KEY_FILE
 
                             sshPut remote: remote, from: 'deployment/docker-compose.yml', into: '/home/soranosuke/deployment/docker-compose.yml'
-                            writeFile file: 'deployment.sh', text: 'ls -lrt'
+                            writeFile file: 'deployment.sh', text: 'cd deployment && docker compose up -d'
                             sshScript remote: remote, script: "deployment.sh"
                         }
                     }
