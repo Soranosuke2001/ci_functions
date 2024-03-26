@@ -5,8 +5,6 @@ def call(dockerRepoName, imageName) {
             stage('Setup') {
                 steps {
                     script {
-                        // Install necessary build dependencies
-                        sh 'apt update && apt install -y python3-dev default-libmysqlclient-dev'
                         // Create and activate virtual environment
                         sh 'python3 -m venv venv'
                         sh '. venv/bin/activate'
