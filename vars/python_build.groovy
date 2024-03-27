@@ -31,7 +31,7 @@ def call(dockerRepoName, imageName, serviceName) {
                 steps {
                     script {
                         // Run pylint
-                        sh ". venv/bin/activate && pylint --fail-under=5 ${serviceName}/*.py || true"
+                        sh ". venv/bin/activate && pylint --fail-under=5 ${serviceName}/*.py"
                     }
                 }
             }
