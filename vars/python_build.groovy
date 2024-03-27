@@ -21,6 +21,7 @@ def call(dockerRepoName, imageName, serviceName) {
                             . venv/bin/activate
                             pip install --upgrade pip
                             pip install --upgrade flask
+                            pip install pylint
                             pip install -r requirements.txt
                         '''
                     }
@@ -30,7 +31,7 @@ def call(dockerRepoName, imageName, serviceName) {
                 steps {
                     script {
                         // Run pylint
-                        sh ". venv/bin/activate && pylint ${serviceName}/*.py || true"
+                        sh ". venv/bin/activate && pylint --fail-under=5 ${serviceName}/*.py || true"
                     }
                 }
             }
@@ -63,6 +64,7 @@ def call(dockerRepoName, imageName, serviceName) {
                     expression { params.DEPLOY == true }
                 }
                 steps {
+                    // SSH into the VM and deploy the app
                     withCredentials([sshUserPrivateKey(credentialsId: 'microservices_vm', keyFileVariable: 'KEY_FILE', usernameVariable: 'USER')]) {
                         script {
                             remote.user = USER
