@@ -39,12 +39,7 @@ def call(dockerRepoName, imageName, serviceName) {
                 steps {
                     script {
                         // Install Safety tool
-                        def skipOption = ''
-
-                        if (fileExists("${serviceName}/random_data_generator.py")) {
-                            skipOption = "--skip ${serviceName}/random_data_generator.py"
-                        }
-                        sh ". venv/bin/activate && bandit -r ${serviceName}/ ${skipOption}"
+                        sh ". venv/bin/activate && bandit -r ${serviceName}/"
                             // safety check -r requirements.txt
                     }
                 }
