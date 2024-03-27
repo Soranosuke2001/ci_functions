@@ -16,14 +16,14 @@ def call(dockerRepoName, imageName, serviceName) {
                 steps {
                     script {
                         // Create and activate virtual environment
-                        sh '''
+                        sh """
                             python3 -m venv venv
                             . venv/bin/activate
                             pip install --upgrade pip
                             pip install --upgrade flask
                             pip install bandit
-                            pip install -r requirements.txt
-                        '''
+                            pip install -r ${serviceName}/requirements.txt
+                        """
                     }
                 }
             }
