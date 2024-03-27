@@ -21,7 +21,7 @@ def call(dockerRepoName, imageName, serviceName) {
                             . venv/bin/activate
                             pip install --upgrade pip
                             pip install --upgrade flask
-                            pip install pylint
+                            pip install bandit
                             pip install -r requirements.txt
                         '''
                     }
@@ -39,10 +39,8 @@ def call(dockerRepoName, imageName, serviceName) {
                 steps {
                     script {
                         // Install Safety tool
-                        sh '''
-                            . venv/bin/activate
-                            safety check -r requirements.txt
-                        '''
+                        sh ". venv/bin/activate && bandit -r ${serviceName}/"
+                            // safety check -r requirements.txt
                     }
                 }
             }
