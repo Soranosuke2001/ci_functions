@@ -38,9 +38,8 @@ def call(dockerRepoName, imageName, serviceName) {
             stage('Security Check') {
                 steps {
                     script {
-                        // Install Safety tool
+                        // Bandit security vulnerability checking
                         sh ". venv/bin/activate && bandit -r ${serviceName}/"
-                            // safety check -r requirements.txt
                     }
                 }
             }
@@ -69,7 +68,13 @@ def call(dockerRepoName, imageName, serviceName) {
                             remote.identityFile = KEY_FILE
 
                             sshPut remote: remote, from: 'deployment/docker-compose.yml', into: '/home/soranosuke/deployment/docker-compose.yml'
-                            writeFile file: 'deployment.sh', text: 'cd deployment && docker compose up -d'
+                            writeFile file: 'deployment.sh', text: '''
+                            cd deployment
+                            docker compose stop
+                            docker compose rm -f
+                            docker compose pull
+                            docker compose up -d
+                            '''
                             sshScript remote: remote, script: "deployment.sh"
                         }
                     }
