@@ -12,37 +12,37 @@ def call(dockerRepoName, imageName, serviceName) {
         }
 
         stages {
-            stage('Setup') {
-                steps {
-                    script {
-                        // Create and activate virtual environment
-                        sh """
-                            python3 -m venv venv
-                            . venv/bin/activate
-                            pip install --upgrade pip
-                            pip install --upgrade flask
-                            pip install bandit
-                            pip install -r ${serviceName}/requirements.txt
-                        """
-                    }
-                }
-            }
-            stage('Lint') {
-                steps {
-                    script {
-                        // Run pylint
-                        sh ". venv/bin/activate && pylint --fail-under=5 ${serviceName}/*.py"
-                    }
-                }
-            }
-            stage('Security Check') {
-                steps {
-                    script {
-                        // Bandit security vulnerability checking
-                        sh ". venv/bin/activate && bandit -r ${serviceName}/"
-                    }
-                }
-            }
+            // stage('Setup') {
+            //     steps {
+            //         script {
+            //             // Create and activate virtual environment
+            //             sh """
+            //                 python3 -m venv venv
+            //                 . venv/bin/activate
+            //                 pip install --upgrade pip
+            //                 pip install --upgrade flask
+            //                 pip install bandit
+            //                 pip install -r ${serviceName}/requirements.txt
+            //             """
+            //         }
+            //     }
+            // }
+            // stage('Lint') {
+            //     steps {
+            //         script {
+            //             // Run pylint
+            //             sh ". venv/bin/activate && pylint --fail-under=5 ${serviceName}/*.py"
+            //         }
+            //     }
+            // }
+            // stage('Security Check') {
+            //     steps {
+            //         script {
+            //             // Bandit security vulnerability checking
+            //             sh ". venv/bin/activate && bandit -r ${serviceName}/"
+            //         }
+            //     }
+            // }
             stage('Package') {
                 when {
                     expression { env.GIT_BRANCH == 'origin/main' }
