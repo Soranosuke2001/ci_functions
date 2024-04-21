@@ -45,6 +45,10 @@ def call(dockerRepoName, imageName, serviceName) {
             }
             stage('Package') {
                 when {
+                    allOf {
+                        branch: "main"
+                        
+                    }
                     expression { env.GIT_BRANCH == 'origin/main' }
                 }
                 steps {
