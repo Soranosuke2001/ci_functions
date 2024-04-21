@@ -1,4 +1,8 @@
-def call(dockerRepoName, imageName, serviceName) {
+def call(Map params) {
+    def dockerRepoName = params.dockerRepoName
+    def imageName = params.imageName
+    def serviceName = params.serviceName
+
     def remote = [:]
     remote.name = 'microservices-project'
     remote.host = '35.230.127.229'
