@@ -48,6 +48,7 @@ def call(Map params) {
                         // Run tests
                         sh """
                         cd ./${serviceName}
+                        ls -l
                         npm run test
                         """
                     }
@@ -60,6 +61,7 @@ def call(Map params) {
                         // Build the Next.js project
                         sh """
                         cd ./${serviceName}
+                        ls -l
                         npm run build
                         """
                     }
