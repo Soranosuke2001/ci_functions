@@ -62,7 +62,7 @@ def call(dockerRepoName, imageName, serviceName) {
                 }
                 steps {
                     // SSH into the VM and deploy the app
-                    withCredentials([sshUserPrivateKey(credentialsId: 'microservices_vm', keyFileVariable: 'KEY_FILE', usernameVariable: 'USER')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'deployment_vm', keyFileVariable: 'KEY_FILE', usernameVariable: 'USER')]) {
                         script {
                             remote.user = USER
                             remote.identityFile = KEY_FILE
