@@ -33,11 +33,11 @@ def call(Map params) {
             stage('Install dependencies') {
                 steps {
                     script {
-                        sh '''
+                        sh """
                         node --version
                         npm --version
-                        npm install
-                        '''
+                        npm install ./${serviceName}/
+                        """
                     }
                 }
             }
