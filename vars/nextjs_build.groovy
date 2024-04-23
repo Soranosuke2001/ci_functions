@@ -33,20 +33,11 @@ def call(Map params) {
             stage('Install dependencies') {
                 steps {
                     script {
-                        // Use Node Version Manager (nvm) to manage Node.js versions
                         sh '''
-                        echo "Installing NVM and Node.js"
-                        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-                        export NVM_DIR="$HOME/.nvm"
-                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-                        [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
-                        nvm install stable
-                        nvm use stable
                         node --version
                         npm --version
+                        npm install
                         '''
-                        // Install npm dependencies
-                        sh 'npm install'
                     }
                 }
             }

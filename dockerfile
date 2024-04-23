@@ -49,6 +49,9 @@ RUN apt-get install -y docker-ce
 RUN usermod -aG docker jenkins
 RUN newgrp docker
 
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
+    apt-get install -y nodejs
+
 USER jenkins
 
 ENV JAVA_OPTS="-Xmx4096m"
