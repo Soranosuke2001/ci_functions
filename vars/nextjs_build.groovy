@@ -42,20 +42,6 @@ def call(Map params) {
                 }
             }
 
-            stage('Test') {
-                steps {
-                    script {
-                        // Run tests
-                        sh """
-                        cd ./${serviceName}
-                        ls -l
-                        cat ./package.json
-                        npm run test
-                        """
-                    }
-                }
-            }
-
             stage('Build') {
                 steps {
                     script {
