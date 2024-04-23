@@ -46,7 +46,7 @@ def call(Map params) {
                 steps {
                     script {
                         // Build the Next.js project
-                        sh 'npm run build'
+                        sh 'npm run'
                     }
                 }
             }
