@@ -49,6 +49,7 @@ def call(Map params) {
                         sh """
                         cd ./${serviceName}
                         ls -l
+                        cat ./package.json
                         npm run test
                         """
                     }
