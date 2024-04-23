@@ -42,20 +42,20 @@ def call(Map params) {
                 }
             }
 
-            stage('Build') {
-                steps {
-                    script {
-                        // Build the Next.js project
-                        sh 'npm run'
-                    }
-                }
-            }
-            
             stage('Test') {
                 steps {
                     script {
                         // Run tests
-                        sh 'npm run test'
+                        sh "npm run test --prefix ./${serviceName}/"
+                    }
+                }
+            }
+
+            stage('Build') {
+                steps {
+                    script {
+                        // Build the Next.js project
+                        sh "npm run build --prefix ./${serviceName}/"
                     }
                 }
             }
