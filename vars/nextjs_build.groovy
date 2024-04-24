@@ -15,11 +15,6 @@ def call(Map params) {
             booleanParam(defaultValue: false, description: 'Deploy the App', name:'DEPLOY')
         }
 
-        environment {
-            // Define environment variables
-            NODE_VERSION = '16'  // Define the Node.js version to use
-        }
-
         stages {
             stage('Preparation') {
                 steps {
@@ -30,31 +25,6 @@ def call(Map params) {
                 }
             }
             
-            stage('Install dependencies') {
-                steps {
-                    script {
-                        sh """
-                        node --version
-                        npm --version
-                        npm install ./${serviceName}/
-                        """
-                    }
-                }
-            }
-
-            stage('Build') {
-                steps {
-                    script {
-                        // Build the Next.js project
-                        sh """
-                        cd ./${serviceName}
-                        ls -l
-                        npm run build
-                        """
-                    }
-                }
-            }
-
             stage('Package') {
                 when {
                     expression { env.GIT_BRANCH == 'origin/main' }
