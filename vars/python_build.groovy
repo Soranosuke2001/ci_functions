@@ -12,28 +12,11 @@ def call(dockerRepoName, imageName, serviceName) {
         }
 
         stages {
-            stage('Check Changes') {
-                steps {
-                    script {
-                        // Define the directory to check
-                        def watchFolder = "./${serviceName}"
-
-                        // Get changes from last commit
-                        def changes = sh(script: "git diff HEAD HEAD~ --name-only", returnStdout: true).trim()
-                        
-                        // Check if the changes include the specific folder
-                        if(changes.contains(watchFolder)) {
-                            echo "Changes detected in ${watchFolder}, proceeding with pipeline"
-                        } else {
-                            echo "No changes in ${watchFolder}, stopping pipeline"
-                            currentBuild.result = 'SUCCESS'
-                            sh 'exit 0' 
-                        }
-                    }
-                }
-            }
-            
             stage('Setup') {
+                when {
+                    changeset "${serviceName}/**"
+                }
+
                 steps {
                     script {
                         // Create and activate virtual environment
@@ -48,7 +31,12 @@ def call(dockerRepoName, imageName, serviceName) {
                     }
                 }
             }
+
             stage('Lint') {
+                when {
+                    changeset "${serviceName}/**"
+                }
+
                 steps {
                     script {
                         // Run pylint
@@ -56,7 +44,12 @@ def call(dockerRepoName, imageName, serviceName) {
                     }
                 }
             }
+
             stage('Security Check') {
+                when {
+                    changeset "${serviceName}/**"
+                }
+
                 steps {
                     script {
                         // Bandit security vulnerability checking
@@ -66,8 +59,12 @@ def call(dockerRepoName, imageName, serviceName) {
             }
             stage('Package') {
                 when {
-                    expression { env.GIT_BRANCH == 'origin/main' }
+                    allOf {
+                        expression { env.GIT_BRANCH == 'origin/main' }
+                        changeset "${serviceName}/**"
+                    }
                 }
+
                 steps {
                     // Pushing the image to Docker Hub
                     withCredentials([string(credentialsId: 'DockerHub', variable: 'TOKEN')]) {
@@ -77,10 +74,12 @@ def call(dockerRepoName, imageName, serviceName) {
                     }
                 }
             }
+
             stage('Deploy') {
                 when {
                     expression { params.DEPLOY == true }
                 }
+                
                 steps {
                     // SSH into the VM and deploy the app
                     withCredentials([sshUserPrivateKey(credentialsId: 'deployment_vm', keyFileVariable: 'KEY_FILE', usernameVariable: 'USER')]) {
@@ -100,6 +99,7 @@ def call(dockerRepoName, imageName, serviceName) {
                         }
                     }
                 }
+
                 post {
                     always {
                         script {
