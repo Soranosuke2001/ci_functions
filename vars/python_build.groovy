@@ -12,6 +12,27 @@ def call(dockerRepoName, imageName, serviceName) {
         }
 
         stages {
+            stage('Check Changes') {
+                steps {
+                    script {
+                        // Define the directory to check
+                        def watchFolder = "./${serviceName}"
+
+                        // Get changes from last commit
+                        def changes = sh(script: "git diff HEAD HEAD~ --name-only", returnStdout: true).trim()
+                        
+                        // Check if the changes include the specific folder
+                        if(changes.contains(watchFolder)) {
+                            echo "Changes detected in ${watchFolder}, proceeding with pipeline"
+                        } else {
+                            echo "No changes in ${watchFolder}, stopping pipeline"
+                            currentBuild.result = 'SUCCESS'
+                            sh 'exit 0' 
+                        }
+                    }
+                }
+            }
+            
             stage('Setup') {
                 steps {
                     script {
